@@ -18,5 +18,5 @@ async def on_message(message: discord.Message):
     print('{0.id} {0.display_name}'.format(message.author))
 
 
-# using token for Kehv's Test Bot
-client.run('MjAzNjg1NjgzMTg4MDcyNDQ5.Cmsgkw.wzLh8dNAzUhdBmtCbRHAB6PUckI')
+# Add Discord Token
+client.run()

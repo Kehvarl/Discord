@@ -131,5 +131,6 @@ def insult(source=bard):
                                  random.choice(source['b']),
                                  random.choice(source['c']))
 
-# use Iwaku Bored Bot
-client.run('MjA5MTEwNDczOTYwOTgwNDgw.Cn7czg.69WycM2MLMXM9a_XZE8HpmdvFlU')
+# Add Discord Token
+client.run()
+

@@ -98,4 +98,5 @@ def next_word(target, source):
         if word == target:
             return sl[index + 1]
 
-client.run('MjAzNjg1NjgzMTg4MDcyNDQ5.Cmsgkw.wzLh8dNAzUhdBmtCbRHAB6PUckI')
+# Add Discord Token
+client.run()

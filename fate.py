@@ -72,4 +72,4 @@ async def char(ctx, user:discord.Member, *, fate_aspect=None):
             await fate_keeper.say('{0.display_name} gained {1}'.format(user, fate_aspect))
 
 
-fate_keeper.run('MjAzNjg1NjgzMTg4MDcyNDQ5.Cmsgkw.wzLh8dNAzUhdBmtCbRHAB6PUckI')
+fate_keeper.run()
