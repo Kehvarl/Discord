@@ -6,6 +6,8 @@ from discord.ext.commands import Bot
 amor_manager = Bot(command_prefix="!", description='Do cool things for AMOR')
 
 
+required_role = "amor citizen"
+
 admin_roles = [
     "dragon",
     "sovereign",
@@ -98,22 +100,25 @@ async def group(ctx, *, new_group=None):
         new_group = random.choice(changeable_groups)
     new_group = new_group.lower()
     author = ctx.message.author
-    roles = author.roles
+    member_roles = author.roles
     server_roles = ctx.message.server.roles
 
-    # Clear the ugly command away
-    # await amor_manager.delete_message(ctx.message)
+    member_allowed = discord.utils.find(lambda r: r.name.lower() == required_role, member_roles)
+
+    if not member_allowed:
+        await amor_manager.say("You must be a member of the {0} role to join a color group".format(required_role.title()))
+        return
 
     if new_group in changeable_groups:
         # Remove the old group the user was in
-        for role in roles:
+        for role in member_roles:
             if role.name.lower() in changeable_groups:
-                roles.remove(role)
+                member_roles.remove(role)
         # Get the proper object for the user's new group
         role = discord.utils.find(lambda r: r.name.lower() == new_group, server_roles)
         if role is not None:
-            roles.append(role)
-            await(amor_manager.replace_roles(author, *roles))
+            member_roles.append(role)
+            await(amor_manager.replace_roles(author, *member_roles))
             await amor_manager.say('{0} moved to group {1}'.format(author.name, new_group))
     else:
         suggest = random.choice(changeable_groups)
