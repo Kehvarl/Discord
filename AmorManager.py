@@ -43,6 +43,10 @@ async def on_ready():
 
 @amor_manager.command(pass_context=True)
 async def botname(ctx, *, new_name=None):
+    """
+    Restricted to admins.
+    Change the bot's nickname on this server
+    """
     if ctx.message.channel.name.lower() not in bot_channels:
         return
 
@@ -55,6 +59,9 @@ async def botname(ctx, *, new_name=None):
 
 @amor_manager.command(pass_context=True)
 async def nogroup(ctx):
+    """
+    Remove yourself from all color groups (Back to pink)
+    """
     if ctx.message.channel.name.lower() not in bot_channels:
         return
 
@@ -69,6 +76,20 @@ async def nogroup(ctx):
 
 @amor_manager.command(pass_context=True)
 async def group(ctx, *, new_group=None):
+    """
+    Place yourself in the specified color group.  Leave new_group blank for a random assignment.
+    Allowed Color Groups:
+    Roc = Red
+    Manticore = Orange
+    Griffin = Gold
+    Wyvern = Green
+    Kraken = Blue
+    Unicorn = Pinkish
+    Basilisk = Grey
+    Ash = Light Grey
+    Moon = Light Blue
+    Owl = Tan
+    """
     if ctx.message.channel.name.lower() not in bot_channels:
         return
 
