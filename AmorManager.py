@@ -6,6 +6,12 @@ from discord.ext.commands import Bot
 amor_manager = Bot(command_prefix="!", description='Do cool things for AMOR')
 
 
+admin_roles = [
+    "dragon",
+    "sovereign",
+    "royal guard"
+]
+
 changeable_groups = [
     "roc",
     "manticore",
@@ -33,6 +39,18 @@ async def on_ready():
     print('------')
     if not hasattr(amor_manager, 'up_time'):
         amor_manager.up_time = datetime.datetime.utcnow()
+
+
+@amor_manager.command(pass_context=True)
+async def botname(ctx, *, new_name=None):
+    if ctx.message.channel.name.lower() not in bot_channels:
+        return
+
+    member_roles = ctx.message.author.roles
+    member_admin = discord.utils.find(lambda r: r.name.lower() in admin_roles, member_roles)
+    if member_admin is not None:
+        bot_member = discord.utils.find(lambda m: m.id == amor_manager.user.id, ctx.message.server.members)
+        await amor_manager.change_nickname(bot_member, new_name)
 
 
 @amor_manager.command(pass_context=True)
