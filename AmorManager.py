@@ -41,6 +41,9 @@ async def on_ready():
     print('------')
     if not hasattr(amor_manager, 'up_time'):
         amor_manager.up_time = datetime.datetime.utcnow()
+    server = next(iter(amor_manager.servers))
+    channel = discord.utils.find(lambda c: c.name.lower() == "bot_commands", server.channels)
+    await amor_manager.send_message(channel, "`Has logged in`")
 
 
 @amor_manager.command(pass_context=True)
