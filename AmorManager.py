@@ -114,14 +114,12 @@ async def group(ctx, *, new_group=None):
 
     if new_group in changeable_groups:
         # Remove the old group the user was in
-        for role in member_roles:
-            if role.name.lower() in changeable_groups:
-                member_roles.remove(role)
+        new_roles = [r for r in member_roles if not r.name.lower() in changeable_groups]
         # Get the proper object for the user's new group
         role = discord.utils.find(lambda r: r.name.lower() == new_group, server_roles)
         if role is not None:
-            member_roles.append(role)
-            await(amor_manager.replace_roles(author, *member_roles))
+            new_roles.append(role)
+            await(amor_manager.replace_roles(author, *new_roles))
             await amor_manager.say('{0} moved to group {1}'.format(author.name, new_group))
     else:
         suggest = random.choice(changeable_groups)
