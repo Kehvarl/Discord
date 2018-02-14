@@ -76,7 +76,7 @@ async def nogroup(ctx):
         if role.name.lower() in changeable_groups:
             roles.remove(role)
     await amor_manager.replace_roles(author, *roles)
-    await amor_manager.say('{0} removed from color groups'.format(author.display_name))
+    await amor_manager.say('{0} removed from color groups'.format(author.name))
 
 
 @amor_manager.command(pass_context=True)
@@ -120,10 +120,9 @@ async def group(ctx, *, new_group=None):
         if role is not None:
             new_roles.append(role)
             await(amor_manager.replace_roles(author, *new_roles))
-            await amor_manager.say('{0} moved to group {1}'.format(author.display_name, new_group))
+            await amor_manager.say('{0} moved to group {1}'.format(author.name, new_group))
     else:
         suggest = random.choice(changeable_groups)
         await amor_manager.say("`{0}` is not a color group you're allowed to join.   Why not try `{1}`".format(new_group, suggest))
-
 
 
