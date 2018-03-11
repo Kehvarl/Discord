@@ -196,7 +196,8 @@ async def group(ctx, *, new_group=None):
     member_allowed = discord.utils.find(lambda r: r.name.lower() == required_role, member_roles)
 
     if not member_allowed:
-        await amor_manager.say("You must be a member of the {0} role to join a color group".format(required_role.title()))
+        need_citizen = "You must be a member of the {0} role to join a color group"
+        await amor_manager.say(need_citizen.format(required_role.title()))
         return
 
     if new_group in changeable_groups:
@@ -210,7 +211,8 @@ async def group(ctx, *, new_group=None):
             await amor_manager.say('{0} moved to group {1}'.format(author.name, new_group))
     else:
         suggest = random.choice(changeable_groups)
-        await amor_manager.say("`{0}` is not a color group you're allowed to join.   Why not try `{1}`".format(new_group, suggest))
+        cant_join = "`{0}` is not a color group you're allowed to join.   Why not try `{1}`"
+        await amor_manager.say(cant_join.format(new_group, suggest))
 
 
 amor_manager.run(Credentials.amor)
