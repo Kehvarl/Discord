@@ -1,7 +1,9 @@
 import datetime
 import random
 import discord
+import json
 from discord.ext.commands import Bot
+from credentials import Credentials
 
 amor_manager = Bot(command_prefix="!", description='Do cool things for AMOR')
 
@@ -32,6 +34,8 @@ bot_channels = [
     "bot_commands"
 ]
 
+user_tags = {}
+
 
 @amor_manager.event
 async def on_ready():
@@ -43,7 +47,48 @@ async def on_ready():
         amor_manager.up_time = datetime.datetime.utcnow()
     server = next(iter(amor_manager.servers))
     channel = discord.utils.find(lambda c: c.name.lower() == "bot_commands", server.channels)
-    await amor_manager.send_message(channel, "`Has logged in`")
+    # await amor_manager.send_message(channel, "`Has logged in`")
+
+
+@amor_manager.listen()
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    if message.channel.is_private:
+        return
+
+    if message.channel.name.lower() not in bot_channels:
+        pass
+
+    if not message.content.startswith(amor_manager.command_prefix):
+        # await self._check_for_reactions(message)
+        if "#" in message.content:
+            tags = [t for t in message.content.split() if "#" in t[0:1]]
+            for tag in tags:
+                if not user_tags.get(message.author.name):
+                    user_tags[message.author.name] = {'name': message.author.display_name, 'tags': {}}
+                if not user_tags[message.author.name]['tags'].get(tag):
+                    user_tags[message.author.name]['tags'][tag] = 0
+                user_tags[message.author.name]['tags'][tag] += 1
+                user_tags[message.author.name]['name'] = message.author.display_name
+                print(user_tags[message.author.name]['name'], ":", json.dumps(user_tags[message.author.name]['tags']))
+
+
+@amor_manager.command(pass_context=True)
+async def mytags(ctx):
+    """
+    View the tags you've used since the last bot restart
+    """
+    if ctx.message.channel.name.lower() not in bot_channels:
+        return
+    display = ctx.message.author.display_name
+    display_tags = []
+    if not user_tags.get(ctx.message.author.name, None):
+        return
+    for tag_key, tag_count in user_tags[ctx.message.author.name]['tags'].items():
+        display_tags.append("{0} ({1})".format(tag_key, tag_count))
+    await amor_manager.say("{0}'s tag usage: \n ```{1}```".format(display, "\n".join(display_tags)))
 
 
 @amor_manager.command(pass_context=True)
@@ -126,4 +171,4 @@ async def group(ctx, *, new_group=None):
         await amor_manager.say("`{0}` is not a color group you're allowed to join.   Why not try `{1}`".format(new_group, suggest))
 
 
-
+amor_manager.run(Credentials.amor)
