@@ -38,7 +38,7 @@ user_tags = {}
 
 
 @amor_manager.event
-async def on_ready():
+async def on_ready(announce=False):
     print('Logged in as:')
     print('Username: ' + amor_manager.user.name)
     print('ID: ' + amor_manager.user.id)
@@ -46,8 +46,9 @@ async def on_ready():
     if not hasattr(amor_manager, 'up_time'):
         amor_manager.up_time = datetime.datetime.utcnow()
     server = next(iter(amor_manager.servers))
-    channel = discord.utils.find(lambda c: c.name.lower() == "bot_commands", server.channels)
-    # await amor_manager.send_message(channel, "`Has logged in`")
+    if announce:
+        channel = discord.utils.find(lambda c: c.name.lower() == "bot_commands", server.channels)
+        await amor_manager.send_message(channel, "`Has logged in`")
 
 
 @amor_manager.listen()

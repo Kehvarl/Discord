@@ -2,6 +2,7 @@ import datetime
 
 import discord
 from discord.ext.commands import Bot
+from credentials import Credentials
 
 
 fate_keeper = Bot(command_prefix="!", description='FATE-Keeper bot for working with FATE style RPs')
@@ -72,4 +73,4 @@ async def char(ctx, user:discord.Member, *, fate_aspect=None):
             await fate_keeper.say('{0.display_name} gained {1}'.format(user, fate_aspect))
 
 
-fate_keeper.run()
+fate_keeper.run(Credentials.kehvbot)

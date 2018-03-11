@@ -1,5 +1,6 @@
 import discord
 # import asyncio
+from credentials import Credentials
 
 
 client = discord.Client()
@@ -19,4 +20,4 @@ async def on_message(message: discord.Message):
 
 
 # Add Discord Token
-client.run()
+client.run(Credentials.kehvbot)

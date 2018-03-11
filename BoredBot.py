@@ -3,7 +3,7 @@ import discord
 import re
 import random
 import datetime
-
+from credentials import Credentials
 
 client = discord.Client()
 
@@ -131,6 +131,6 @@ def insult(source=bard):
                                  random.choice(source['b']),
                                  random.choice(source['c']))
 
-# Add Discord Token
-client.run()
 
+# Add Discord Token
+client.run(Credentials.bored)

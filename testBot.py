@@ -4,6 +4,7 @@ import random
 import urllib.request
 
 import discord
+from credentials import Credentials
 
 client = discord.Client()
 
@@ -98,5 +99,6 @@ def next_word(target, source):
         if word == target:
             return sl[index + 1]
 
+
 # Add Discord Token
-client.run()
+client.run(Credentials.kehvbot)

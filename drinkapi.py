@@ -59,6 +59,7 @@ def search(term):
         for key, value in drink.items():
             print(key, value)
 
+
 if __name__ == "__main__":
     getlist(api_a)
     print('...')
