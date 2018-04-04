@@ -30,12 +30,12 @@ changeable_groups = [
 ]
 
 bot_channels = [
-    "hideyourscreen",
+    "science",
     "bot_commands"
 ]
 
 tod_channels = [
-    "science",
+    "hideyourscreen",
     "bot_commands"
 ]
 
@@ -218,7 +218,7 @@ async def roll(ctx, *, dice: str):
 async def tod(ctx):
     """Truth Or Dare"""
     if ctx.invoked_subcommand is None:
-        await amor_manager.say('')
+        pass
 
 
 @tod.command(pass_context=True)
@@ -274,7 +274,7 @@ async def leave(ctx):
         await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
     else:
         player = ctx.message.author.name
-        if player not in tod_games[room]['participants']:
+        if player not in list(tod_games[room]['participants'].keys()):
             await amor_manager.say("{}, you cannot leave the game if you have not joined".format(player))
         else:
             del tod_games[room]['participants'][player.lower()]
@@ -290,7 +290,7 @@ async def spin(ctx):
     if room not in tod_games:
         await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
     else:
-        participants = tod_games[room]['participants']
+        participants = list(tod_games[room]['participants'].keys())
         player = ctx.message.author.name
         spin = random.choice(participants)
         if spin == player.lower() or spin == tod_games[room]['last'].lower():
