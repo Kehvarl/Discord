@@ -30,11 +30,18 @@ changeable_groups = [
 ]
 
 bot_channels = [
+    "hideyourscreen",
+    "bot_commands"
+]
+
+tod_channels = [
     "science",
     "bot_commands"
 ]
 
 user_tags = {}
+
+tod_games = {}
 
 
 @amor_manager.event
@@ -109,6 +116,23 @@ async def botname(ctx, *, new_name=None):
 
 
 @amor_manager.command(pass_context=True)
+async def vouch(ctx, *, member_name=None):
+    if ctx.message.channel.name.lower() not in bot_channels:
+        return
+
+    server = ctx.message.server
+    member_roles = ctx.message.author.roles
+    member_admin = discord.utils.find(lambda r: r.name.lower() in admin_roles, member_roles)
+    if member_admin is not None:
+        member = discord.utils.find(lambda c: c.name.lower() == member_name.lower(), server.members)
+        roles = member.roles
+        new_role = discord.utils.find(lambda r: r.name.lower() == required_role, server.roles)
+        roles.append(new_role)
+        await amor_manager.replace_roles(member, *roles)
+        await amor_manager.say('{0} granted citizenship'.format(member.name))
+
+
+@amor_manager.command(pass_context=True)
 async def nogroup(ctx):
     """
     Remove yourself from all color groups (Back to pink)
@@ -172,6 +196,121 @@ async def group(ctx, *, new_group=None):
         suggest = random.choice(changeable_groups)
         cant_join = "`{0}` is not a color group you're allowed to join.   Why not try `{1}`"
         await amor_manager.say(cant_join.format(new_group, suggest))
+
+
+@amor_manager.command(pass_context=True)
+async def roll(ctx, *, dice: str):
+    if ctx.message.channel.name.lower() not in bot_channels:
+        return
+
+    """Rolls a dice in NdN format."""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except Exception:
+        await amor_manager.say('Format has to be in NdN!')
+        return
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await amor_manager.say(result)
+
+
+@amor_manager.group(pass_context=True)
+async def tod(ctx):
+    """Truth Or Dare"""
+    if ctx.invoked_subcommand is None:
+        await amor_manager.say('')
+
+
+@tod.command(pass_context=True)
+async def new(ctx):
+    if ctx.message.channel.name.lower() not in tod_channels:
+        return
+
+    room = ctx.message.channel.name.lower()
+    host = ctx.message.author
+    if room not in tod_games:
+        tod_games[room] = {'host': host.name, 'host_id': host.name, 'participants': {}, 'last': None}
+        await amor_manager.say("New Game of Truth Or Dare started in {}".format(room))
+    else:
+        host = tod_games[room]['host']
+        await amor_manager.say("Truth or Dare already in progress in {}.  Game host: {}".format(room, host))
+
+
+@tod.command(pass_context=True)
+async def end(ctx):
+    if ctx.message.channel.name.lower() not in tod_channels:
+        return
+
+    room = ctx.message.channel.name.lower()
+    if room not in tod_games:
+        await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
+    else:
+        host = tod_games[room]['host']
+        await amor_manager.say("Game Over in {}!  Thank you to {} for hosting this game!".format(room, host))
+        del tod_games[room]
+
+
+@tod.command(pass_context=True)
+async def join(ctx):
+    if ctx.message.channel.name.lower() not in tod_channels:
+        return
+
+    room = ctx.message.channel.name.lower()
+    if room not in tod_games:
+        await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
+    else:
+        player = ctx.message.author.name
+        tod_games[room]['participants'][player.lower()] = {'spins': 0}
+        await amor_manager.say("{} has joined Truth or Dare!".format(player))
+
+
+@tod.command(pass_context=True)
+async def leave(ctx):
+    if ctx.message.channel.name.lower() not in tod_channels:
+        return
+
+    room = ctx.message.channel.name.lower()
+    if room not in tod_games:
+        await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
+    else:
+        player = ctx.message.author.name
+        if player not in tod_games[room]['participants']:
+            await amor_manager.say("{}, you cannot leave the game if you have not joined".format(player))
+        else:
+            del tod_games[room]['participants'][player.lower()]
+            await amor_manager.say("{} has left Truth or Dare.".format(player))
+
+
+@tod.command(pass_context=True)
+async def spin(ctx):
+    if ctx.message.channel.name.lower() not in tod_channels:
+        return
+
+    room = ctx.message.channel.name.lower()
+    if room not in tod_games:
+        await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
+    else:
+        participants = tod_games[room]['participants']
+        player = ctx.message.author.name
+        spin = random.choice(participants)
+        if spin == player.lower() or spin == tod_games[room]['last'].lower():
+            spin = random.choice(participants)
+        tod_games[room]['last'] = player
+        tod_games[room]['current'] = spin
+        tod_games[room]['participants'][player.lower()]['spins'] += 1
+        await amor_manager.say("{0} has spun {1}!  {1}, Truth or Dare?".format(player, spin))
+
+
+@tod.command(pass_context=True)
+async def turn(ctx):
+    if ctx.message.channel.name.lower() not in tod_channels:
+        return
+
+    room = ctx.message.channel.name.lower()
+    if room not in tod_games:
+        await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
+    else:
+        await amor_manager.say("Current Player is {}".format(tod_games[room]['current']))
 
 
 amor_manager.run(Credentials.amor)
