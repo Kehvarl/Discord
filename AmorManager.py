@@ -198,8 +198,8 @@ async def group(ctx, *, new_group=None):
         await amor_manager.say(cant_join.format(new_group, suggest))
 
 
-@amor_manager.command(pass_context=True)
-async def date(ctx):
+@amor_manager.command()
+async def date():
     d0 = datetime.date(1993, 9, 1)
     d1 = datetime.date.today()
     delta = d1 - d0
@@ -226,7 +226,7 @@ async def roll(ctx, *, dice: str):
         await amor_manager.say('Format has to be in NdN!')
         return
 
-    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    result = ', '.join(str(random.randint(1, limit)) for _ in range(rolls))
     await amor_manager.say(result)
 
 
@@ -308,13 +308,13 @@ async def spin(ctx):
     else:
         participants = list(tod_games[room]['participants'].keys())
         player = ctx.message.author.name
-        spin = random.choice(participants)
-        if spin == player.lower() or spin == tod_games[room]['last'].lower():
-            spin = random.choice(participants)
+        pick = random.choice(participants)
+        if pick == player.lower() or pick == tod_games[room]['last'].lower():
+            pick = random.choice(participants)
         tod_games[room]['last'] = player
-        tod_games[room]['current'] = spin
+        tod_games[room]['current'] = pick
         tod_games[room]['participants'][player.lower()]['spins'] += 1
-        await amor_manager.say("{0} has spun {1}!  {1}, Truth or Dare?".format(player, spin))
+        await amor_manager.say("{0} has spun {1}!  {1}, Truth or Dare?".format(player, pick))
 
 
 @tod.command(pass_context=True)
