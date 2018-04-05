@@ -199,6 +199,22 @@ async def group(ctx, *, new_group=None):
 
 
 @amor_manager.command(pass_context=True)
+async def date(ctx):
+    d0 = datetime.date(1993, 9, 1)
+    d1 = datetime.date.today()
+    delta = d1 - d0
+    day = ordinal(delta.days + 1)
+    september_strings = [
+        "Today is the {} of September, 1993!",
+        "It is {} September, 1993.",
+        "I greet you on this day: September the {} 1993.",
+        "The {} day of The September That Never Ends.",
+        "Eternal September: {} day and counting."
+    ]
+    await amor_manager.say(random.choice(september_strings).format(day))
+
+
+@amor_manager.command(pass_context=True)
 async def roll(ctx, *, dice: str):
     if ctx.message.channel.name.lower() not in bot_channels:
         return
@@ -311,6 +327,20 @@ async def turn(ctx):
         await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
     else:
         await amor_manager.say("Current Player is {}".format(tod_games[room]['current']))
+
+
+SUFFIXES = {1: 'st', 2: 'nd', 3: 'rd'}
+
+
+def ordinal(num):
+    # I'm checking for 10-20 because those are the digits that
+    # don't follow the normal counting scheme.
+    if 10 <= num % 100 <= 20:
+        suffix = 'th'
+    else:
+        # the second parameter is a default.
+        suffix = SUFFIXES.get(num % 10, 'th')
+    return str(num) + suffix
 
 
 amor_manager.run(Credentials.amor)
