@@ -246,6 +246,8 @@ async def new(ctx):
     host = ctx.message.author
     if room not in tod_games:
         tod_games[room] = {'host': host.name, 'host_id': host.name, 'participants': {}, 'last': None}
+        tod_games[room]['current'] = host.name
+        tod_games[room]['participants'][host.name.lower()] = {'spins': 0}
         await amor_manager.say("New Game of Truth Or Dare started in {}".format(room))
     else:
         host = tod_games[room]['host']
@@ -274,8 +276,11 @@ async def join(ctx):
     room = ctx.message.channel.name.lower()
     if room not in tod_games:
         await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
+        return
+    player = ctx.message.author.name
+    if player.lower() in list(tod_games[room]['participants'].keys()):
+        await amor_manager.say("{}... you're already playing Truth or Dare here!".format(room))
     else:
-        player = ctx.message.author.name
         tod_games[room]['participants'][player.lower()] = {'spins': 0}
         await amor_manager.say("{} has joined Truth or Dare!".format(player))
 
@@ -290,8 +295,10 @@ async def leave(ctx):
         await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
     else:
         player = ctx.message.author.name
-        if player not in list(tod_games[room]['participants'].keys()):
+        if player.lower() not in list(tod_games[room]['participants'].keys()):
             await amor_manager.say("{}, you cannot leave the game if you have not joined".format(player))
+        elif player == tod_games[room]['host']:
+            await amor_manager.say("{}, you cannot leave the game you're the host".format(player))
         else:
             del tod_games[room]['participants'][player.lower()]
             await amor_manager.say("{} has left Truth or Dare.".format(player))
@@ -305,16 +312,32 @@ async def spin(ctx):
     room = ctx.message.channel.name.lower()
     if room not in tod_games:
         await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
-    else:
-        participants = list(tod_games[room]['participants'].keys())
-        player = ctx.message.author.name
+        return
+    player = ctx.message.author.name
+    if player != tod_games[room]['current']:
+        await amor_manager.say("{}, it's {}'s turn.".format(player, tod_games[room]['current']))
+        return
+    participants = list(tod_games[room]['participants'].keys())
+    pick = random.choice(participants)
+    if pick == player.lower() or pick == tod_games[room]['last'].lower():
         pick = random.choice(participants)
-        if pick == player.lower() or pick == tod_games[room]['last'].lower():
-            pick = random.choice(participants)
-        tod_games[room]['last'] = player
-        tod_games[room]['current'] = pick
-        tod_games[room]['participants'][player.lower()]['spins'] += 1
-        await amor_manager.say("{0} has spun {1}!  {1}, Truth or Dare?".format(player, pick))
+    tod_games[room]['last'] = player
+    tod_games[room]['current'] = pick
+    tod_games[room]['participants'][player.lower()]['spins'] += 1
+    await amor_manager.say("{0} has spun {1}!  {1}, Truth or Dare?".format(player, pick))
+
+
+@tod.command(pass_context=True)
+async def players(ctx):
+    if ctx.message.channel.name.lower() not in tod_channels:
+        return
+
+    room = ctx.message.channel.name.lower()
+    if room not in tod_games:
+        await amor_manager.say("Truth Or Dare not in progress in {}".format(room))
+        return
+
+    await amor_manager.say("Current Players: {}".format(", ".join(tod_games[room]['participants'].keys())))
 
 
 @tod.command(pass_context=True)
