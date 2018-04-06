@@ -226,8 +226,11 @@ async def roll(ctx, *, dice: str):
         await amor_manager.say('Format has to be in NdN!')
         return
 
-    result = ', '.join(str(random.randint(1, limit)) for _ in range(rolls))
-    await amor_manager.say(result)
+    results = sorted([random.randint(1, limit) for _ in range(rolls)])
+
+    await amor_manager.say("{} [Total:{}, Average:{}]".format(', '.join(str(x) for x in results),
+                                                              sum(results),
+                                                              sum(results)//len(results)))
 
 
 @amor_manager.group(pass_context=True)
