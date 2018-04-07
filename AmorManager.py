@@ -117,6 +117,7 @@ async def botname(ctx, *, new_name=None):
 
 @amor_manager.command(pass_context=True)
 async def vouch(ctx, *, member_name=None):
+    """If you're an admin, grant Citizenship to the named member!"""
     if ctx.message.channel.name.lower() not in bot_channels:
         return
 
@@ -242,6 +243,7 @@ async def tod(ctx):
 
 @tod.command(pass_context=True)
 async def new(ctx):
+    """Start a new game"""
     if ctx.message.channel.name.lower() not in tod_channels:
         return
 
@@ -259,6 +261,7 @@ async def new(ctx):
 
 @tod.command(pass_context=True)
 async def end(ctx):
+    """End a game in progress if you're the host"""
     if ctx.message.channel.name.lower() not in tod_channels:
         return
 
@@ -273,6 +276,7 @@ async def end(ctx):
 
 @tod.command(pass_context=True)
 async def join(ctx):
+    """Join a game in progress"""
     if ctx.message.channel.name.lower() not in tod_channels:
         return
 
@@ -290,6 +294,7 @@ async def join(ctx):
 
 @tod.command(pass_context=True)
 async def leave(ctx):
+    """Leave the current game of Truth Or Dare"""
     if ctx.message.channel.name.lower() not in tod_channels:
         return
 
@@ -309,6 +314,7 @@ async def leave(ctx):
 
 @tod.command(pass_context=True)
 async def spin(ctx):
+    """Choose a player to Dare... Or Truth!"""
     if ctx.message.channel.name.lower() not in tod_channels:
         return
 
@@ -332,6 +338,7 @@ async def spin(ctx):
 
 @tod.command(pass_context=True)
 async def players(ctx):
+    """List the people playing"""
     if ctx.message.channel.name.lower() not in tod_channels:
         return
 
@@ -345,6 +352,7 @@ async def players(ctx):
 
 @tod.command(pass_context=True)
 async def turn(ctx):
+    """Whose turn is it?"""
     if ctx.message.channel.name.lower() not in tod_channels:
         return
 
