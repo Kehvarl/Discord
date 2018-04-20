@@ -36,7 +36,8 @@ bot_channels = [
 
 tod_channels = [
     "hideyourscreen",
-    "bot_commands"
+    "bot_commands",
+    "voicetext"
 ]
 
 user_tags = {}
@@ -252,6 +253,7 @@ async def new(ctx):
     if room not in tod_games:
         tod_games[room] = {'host': host.name, 'host_id': host.name, 'participants': {}, 'last': None}
         tod_games[room]['current'] = host.name
+        tod_games[room]['last'] = host.name
         tod_games[room]['participants'][host.name.lower()] = {'spins': 0}
         await amor_manager.say("New Game of Truth Or Dare started in {}".format(room))
     else:
